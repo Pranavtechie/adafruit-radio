@@ -26,16 +26,17 @@ rfm9x = adafruit_rfm9x.RFM9x(spi, CS, RESET, 915.0)
 
 # config
 rfm9x.signal_bandwidth = 125000
-rfm9x.coding_rate = 5
+rfm9x.coding_rate = 7 
 rfm9x.spreading_factor = 9
-
+rfm9x.enable_crc = True
+rfm9x.preamble_length = 8
 rfm9x.tx_power = 5
 prev_packet = None
 
 it = 0
 while True:
-    if it % 100 == 0:
-        rfm9x.send(bytes(f"Ping {it // 100}", "utf-8"))
+   # if it % 100 == 0:
+    #    rfm9x.send(bytes(f"Ping {it // 100}", "utf-8"))
 
     packet = None
     print('RasPi LoRa')
