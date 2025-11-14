@@ -83,13 +83,13 @@ packet_received = False
 # amounts of data you will need to break it into smaller send calls.  Each send
 # call will wait for the previous one to finish before continuing.
 rfm9x.send(bytes("Hello world!\r\n", "utf-8"), keep_listening=True)
-send_udp_message("Sent Hello World message!")
+
 
 # Wait to receive packets.  Note that this library can't receive data at a fast
 # rate, in fact it can only receive and process one 252 byte packet at a time.
 # This means you should only use this for low bandwidth scenarios, like sending
 # and receiving a single message at a time.
-send_udp_message("Waiting for packets...")
+
 while True:
     time.sleep(0.1)
     if packet_received:
