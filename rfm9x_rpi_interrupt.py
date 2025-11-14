@@ -36,7 +36,7 @@ def rfm9x_callback(rfm9x_irq):
     print("IRQ detected ", rfm9x_irq, rfm9x.rx_done)
     # check to see if this was a rx interrupt - ignore tx
     if rfm9x.rx_done:
-        packet = rfm9x.receive(timeout=None)
+        packet = rfm9x.receive(timeout=None, with_header=True)
         if packet is not None:
             packet_received = True
             # Received a packet!
@@ -62,7 +62,7 @@ rfm9x = adafruit_rfm9x.RFM9x(spi, CS, RESET, RADIO_FREQ_MHZ, agc=True)
 # config
 rfm9x.preamble_length = 8
 rfm9x.signal_bandwidth = 125000
-rfm9x.coding_rate = 5
+rfm9x.coding_rate = 7
 rfm9x.spreading_factor = 9
 rfm9x.enable_crc = True
 
@@ -94,4 +94,6 @@ while True:
     time.sleep(0.1)
     if packet_received:
         send_udp_message("received message!")
+
+        print("received message!")
         packet_received = False
