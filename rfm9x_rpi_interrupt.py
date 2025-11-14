@@ -24,7 +24,7 @@ udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 def send_udp_message(message):
     """Send a message to the UDP socket."""
     try:
-        udp_socket.sendto(message.encode("utf-8"), (UDP_HOST, UDP_PORT))
+        udp_socket.sendto(message, (UDP_HOST, UDP_PORT))
     except Exception as e:
         # Fallback to print if UDP fails
         print(f"UDP send failed: {e}")
@@ -93,7 +93,7 @@ send_udp_message("Waiting for packets...")
 while True:
     time.sleep(0.1)
     if packet_received:
-        send_udp_message("received message!")
+        # send_udp_message("received message!")
 
         print("received message!")
         packet_received = False
