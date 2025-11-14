@@ -6,14 +6,28 @@
 # This example is for systems that support interrupts like the Raspberry Pi with "blinka"
 # CircuitPython does not support interrupts so it will not work on  Circutpython boards
 # Author: Tony DiCola, Jerry Needell
+import socket
 import time
 
+import adafruit_rfm9x
 import board
 import busio
 import digitalio
 import RPi.GPIO as io
 
-import adafruit_rfm9x
+# Setup UDP socket for logging
+UDP_HOST = "localhost"
+UDP_PORT = 1337
+udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+
+def send_udp_message(message):
+    """Send a message to the UDP socket."""
+    try:
+        udp_socket.sendto(message.encode("utf-8"), (UDP_HOST, UDP_PORT))
+    except Exception as e:
+        # Fallback to print if UDP fails
+        print(f"UDP send failed: {e}")
 
 
 # setup interrupt callback function
@@ -27,9 +41,8 @@ def rfm9x_callback(rfm9x_irq):
             packet_received = True
             # Received a packet!
             # Print out the raw bytes of the packet:
-            print(f"Received (raw bytes): {packet}")
-            print([hex(x) for x in packet])
-            print(f"RSSI: {rfm9x.last_rssi}")
+            send_udp_message(packet)
+            print(packet)
 
 
 # Define radio parameters.
@@ -70,15 +83,15 @@ packet_received = False
 # amounts of data you will need to break it into smaller send calls.  Each send
 # call will wait for the previous one to finish before continuing.
 rfm9x.send(bytes("Hello world!\r\n", "utf-8"), keep_listening=True)
-print("Sent Hello World message!")
+send_udp_message("Sent Hello World message!")
 
 # Wait to receive packets.  Note that this library can't receive data at a fast
 # rate, in fact it can only receive and process one 252 byte packet at a time.
 # This means you should only use this for low bandwidth scenarios, like sending
 # and receiving a single message at a time.
-print("Waiting for packets...")
+send_udp_message("Waiting for packets...")
 while True:
     time.sleep(0.1)
     if packet_received:
-        print("received message!")
+        send_udp_message("received message!")
         packet_received = False
