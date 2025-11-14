@@ -18,8 +18,8 @@ try:
         # Receive data (buffer size 1024 bytes)
         data, addr = sock.recvfrom(1024)
         # Convert bytes to string and print
-        message = data.decode("utf-8")
-        print(message)
+        # message = data.decode("utf-8")
+        print(data)
 except KeyboardInterrupt:
     print("\n\nStopping listener...")
 finally:
