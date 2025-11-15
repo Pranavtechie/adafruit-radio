@@ -17,8 +17,8 @@ import board
 import adafruit_rfm9x
 
 # Configure RFM9x LoRa Radio
-CS = DigitalInOut(board.CE1)
-RESET = DigitalInOut(board.D25)
+CS = DigitalInOut(board.D25)
+RESET = DigitalInOut(board.D18)
 spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
 
 while True:

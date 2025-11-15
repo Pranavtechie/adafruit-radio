@@ -50,8 +50,8 @@ RADIO_FREQ_MHZ = 915.0  # Frequency of the radio in Mhz. Must match your
 # module! Can be a value like 915.0, 433.0, etc.
 
 # Define pins connected to the chip, use these if wiring up the breakout according to the guide:
-CS = digitalio.DigitalInOut(board.CE1)
-RESET = digitalio.DigitalInOut(board.D25)
+CS = digitalio.DigitalInOut(board.D25)
+RESET = digitalio.DigitalInOut(board.D18)
 
 # Initialize SPI bus.
 spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
@@ -71,7 +71,7 @@ rfm9x.enable_crc = True
 rfm9x.tx_power = 5
 
 # configure the interrupt pin and event handling.
-RFM9X_G0 = 22
+RFM9X_G0 = 19
 io.setmode(io.BCM)
 io.setup(RFM9X_G0, io.IN, pull_up_down=io.PUD_DOWN)  # activate input
 io.add_event_detect(RFM9X_G0, io.RISING)
