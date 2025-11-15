@@ -9,6 +9,7 @@
 import socket
 import time
 
+import adafruit_ina260
 import adafruit_rfm9x
 import board
 import busio
@@ -90,8 +91,16 @@ rfm9x.send(bytes("Hello world!\r\n", "utf-8"), keep_listening=True)
 # This means you should only use this for low bandwidth scenarios, like sending
 # and receiving a single message at a time.
 
+
+i2c = board.I2C()
+ina260 = adafruit_ina260.INA260(i2c)
+
 while True:
     time.sleep(0.1)
+    print(
+        "Current: %.2f Voltage: %.2f Power:%.2f"
+        % (ina260.current, ina260.voltage, ina260.power)
+    )
     if packet_received:
         # send_udp_message("received message!")
 
