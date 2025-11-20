@@ -6,6 +6,7 @@
 # This example is for systems that support interrupts like the Raspberry Pi with "blinka"
 # CircuitPython does not support interrupts so it will not work on  Circutpython boards
 # Author: Tony DiCola, Jerry Needell
+import logging
 import socket
 import time
 
@@ -15,6 +16,14 @@ import board
 import busio
 import digitalio
 import RPi.GPIO as io
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
+
+# Open file for INA260 logging
+ina260_log_file = open("ina260.log", "a")
 
 # Setup UDP socket for logging
 UDP_HOST = "localhost"
@@ -27,23 +36,21 @@ def send_udp_message(message):
     try:
         udp_socket.sendto(message, (UDP_HOST, UDP_PORT))
     except Exception as e:
-        # Fallback to print if UDP fails
-        print(f"UDP send failed: {e}")
+        logger.error(f"UDP send failed: {e}")
 
 
 # setup interrupt callback function
 def rfm9x_callback(rfm9x_irq):
     global packet_received  # noqa: PLW0603
-    print("IRQ detected ", rfm9x_irq, rfm9x.rx_done)
+    logger.debug(f"IRQ detected {rfm9x_irq} {rfm9x.rx_done}")
     # check to see if this was a rx interrupt - ignore tx
     if rfm9x.rx_done:
         packet = rfm9x.receive(timeout=None, with_header=True)
         if packet is not None:
             packet_received = True
             # Received a packet!
-            # Print out the raw bytes of the packet:
             send_udp_message(packet)
-            print(packet)
+            logger.info(f"Received packet: {packet}")
 
 
 # Define radio parameters.
@@ -97,12 +104,11 @@ ina260 = adafruit_ina260.INA260(i2c)
 
 while True:
     time.sleep(0.1)
-    print(
-        "Current: %.2f Voltage: %.2f Power:%.2f"
-        % (ina260.current, ina260.voltage, ina260.power)
+    # Log INA260 data to file
+    ina260_log_file.write(
+        f"Current: {ina260.current:.2f} Voltage: {ina260.voltage:.2f} Power: {ina260.power:.2f}\n"
     )
+    ina260_log_file.flush()
     if packet_received:
-        # send_udp_message("received message!")
-
-        print("received message!")
+        logger.info("received message!")
         packet_received = False

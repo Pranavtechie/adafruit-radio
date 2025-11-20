@@ -10,6 +10,7 @@ Author: Brent Rubell for Adafruit Industries
 """
 # Import Python System Libraries
 import time
+import logging
 # Import Blinka Libraries
 import busio
 from digitalio import DigitalInOut, Direction, Pull
@@ -17,6 +18,9 @@ import board
 
 # Import RFM9x
 import adafruit_rfm9x
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # Configure LoRa Radio
 CS = DigitalInOut(board.CE1)
@@ -39,17 +43,17 @@ while True:
     #    rfm9x.send(bytes(f"Ping {it // 100}", "utf-8"))
 
     packet = None
-    print('RasPi LoRa')
+    logger.debug('RasPi LoRa')
 
     # check for packet rx
     packet = rfm9x.receive()
     if packet is None:
-        print('- Waiting for PKT -')
+        logger.debug('- Waiting for PKT -')
     else:
         # Display the packet text and rssi
         prev_packet = packet
         packet_text = str(prev_packet, "utf-8")
-        print('RX: ', packet_text)
+        logger.info(f'RX: {packet_text}')
         time.sleep(1)
 
     time.sleep(0.1)
